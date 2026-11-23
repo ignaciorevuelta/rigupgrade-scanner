@@ -121,6 +121,7 @@ var busNames = map[uint32]string{1: "scsi", 2: "atapi", 3: "ata", 7: "usb", 8: "
 
 func readDisks() []Disk {
 	disks := []Disk{}
+	links := pcieByDrive()
 	for i := 0; i < 32; i++ {
 		// Access 0: metadata queries only, works without administrator rights.
 		h, err := syscall.CreateFile(u16(fmt.Sprintf(`\\.\PhysicalDrive%d`, i)), 0,
@@ -129,6 +130,9 @@ func readDisks() []Disk {
 			continue
 		}
 		if d, ok := queryDisk(h); ok {
+			if d.Bus == "nvme" {
+				d.PCIe = links[uint32(i)]
+			}
 			disks = append(disks, d)
 		}
 		syscall.CloseHandle(h)

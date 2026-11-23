@@ -11,6 +11,7 @@ type Disk struct {
 	SSD       *bool  `json:"ssd"`          // nil = unknown
 	SizeGB    int    `json:"size_gb"`      // decimal GB, 0 = unknown
 	Removable bool   `json:"removable,omitempty"`
+	PCIe      *PCIe  `json:"pcie,omitempty"` // NVMe only; nil = unknown
 }
 
 // Payload is everything that leaves the program. Keep it a whitelist.
