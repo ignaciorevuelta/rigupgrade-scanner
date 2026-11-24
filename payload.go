@@ -7,9 +7,9 @@ import (
 
 type Disk struct {
 	Model     string `json:"model,omitempty"`
-	Bus       string `json:"bus"`          // sata, nvme, usb, ata, sas, raid, sd, other
-	SSD       *bool  `json:"ssd"`          // nil = unknown
-	SizeGB    int    `json:"size_gb"`      // decimal GB, 0 = unknown
+	Bus       string `json:"bus"`     // sata, nvme, usb, ata, sas, raid, sd, other
+	SSD       *bool  `json:"ssd"`     // nil = unknown
+	SizeGB    int    `json:"size_gb"` // decimal GB, 0 = unknown
 	Removable bool   `json:"removable,omitempty"`
 	PCIe      *PCIe  `json:"pcie,omitempty"` // NVMe only; nil = unknown
 }

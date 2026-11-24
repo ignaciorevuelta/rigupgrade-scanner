@@ -18,3 +18,9 @@ func TestLiveDisks(t *testing.T) {
 	b, _ := json.Marshal(readDisks())
 	t.Log(string(b))
 }
+
+// Logs this machine's SMBIOS summary; never fails. Run with: go test -v -run Live
+func TestLiveSMBIOS(t *testing.T) {
+	b, _ := json.Marshal(parseSMBIOS(readSMBIOS()))
+	t.Log(string(b)[:min(400, len(b))])
+}

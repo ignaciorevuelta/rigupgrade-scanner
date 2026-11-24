@@ -14,6 +14,15 @@ type Board struct {
 	Model string `json:"model,omitempty"`
 }
 
+// System adds the two model fields some brands need: Lenovo puts the machine type in Model
+// and the readable name ("ThinkPad T480") in Version and Family. Never the serial number.
+type System struct {
+	Mfr     string `json:"mfr,omitempty"`
+	Model   string `json:"model,omitempty"`
+	Version string `json:"ver,omitempty"`
+	Family  string `json:"family,omitempty"`
+}
+
 type Dimm struct {
 	Loc    string `json:"loc,omitempty"`
 	SizeMB *int   `json:"size_mb"` // nil = unknown, 0 = empty slot
@@ -31,7 +40,7 @@ type Memory struct {
 }
 
 type SMBIOS struct {
-	System Board  `json:"sys"`
+	System System `json:"sys"`
 	Board  Board  `json:"board"`
 	Mem    Memory `json:"mem"`
 	Dimms  []Dimm `json:"dimms"`
@@ -102,7 +111,10 @@ func parseSMBIOS(t []byte) SMBIOS {
 		}
 		switch typ {
 		case 1:
-			s.System = Board{str(4), str(5)}
+			s.System = System{Mfr: str(4), Model: str(5), Version: str(6)}
+			if l >= 0x1B {
+				s.System.Family = str(0x1A)
+			}
 		case 2:
 			s.Board = Board{str(4), str(5)}
 		case 16:

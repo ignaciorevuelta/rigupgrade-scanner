@@ -84,7 +84,7 @@ func TestSerialNeverExported(t *testing.T) {
 
 func TestLaptopSolderedAndUnknown(t *testing.T) {
 	s := parseSMBIOS(cat(
-		array(0, 0),                                // firmware declares nothing
+		array(0, 0), // firmware declares nothing
 		dimm(0xFFFF, 0x0B, 0x1E, 4266, "Onboard"), // LPDDR4, row of chips, unknown size
 	))
 	if s.Mem.MaxMB != 0 || s.Mem.Slots != 0 {
