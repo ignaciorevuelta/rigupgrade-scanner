@@ -24,9 +24,11 @@ try {
     if ($LASTEXITCODE) { throw "build failed" }
 
     if ($CertThumbprint) {
-        signtool sign /sha1 $CertThumbprint /fd SHA256 /tr $TimestampUrl /td SHA256 $Out
-        if ($LASTEXITCODE) { throw "signing failed" }
-        signtool verify /pa /v $Out | Select-Object -Last 3
+        # Built into Windows PowerShell, so no Windows SDK (signtool) is needed.
+        $cert = Get-Item "Cert:\CurrentUser\My\$CertThumbprint"
+        $sig = Set-AuthenticodeSignature -FilePath $Out -Certificate $cert -HashAlgorithm SHA256 -TimestampServer $TimestampUrl -IncludeChain NotRoot
+        if ($sig.Status -ne "Valid") { throw "signing failed: $($sig.StatusMessage)" }
+        Get-AuthenticodeSignature $Out | Format-List Status, StatusMessage, @{n="Signer"; e={$_.SignerCertificate.Subject}}, @{n="Timestamp"; e={$_.TimeStamperCertificate.Subject}}
     } else {
         Write-Warning "Unsigned build. Set RIGUPGRADE_CERT to the certificate thumbprint to sign."
     }
